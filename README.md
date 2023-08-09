@@ -18,9 +18,9 @@ To support this work, we are engaged in the following activities:
   * [The Pile](https://pile.eleuther.ai), in JSONL format, at `/lus/eagle/projects/tpc/Text/jsonl_pile` [there is a binary format version elsewhere). Note that only part of this is scientific articles: see below.
   * [Biorxiv](https://www.biorxiv.org/tdm): download in progress, to be at `/lus/eagle/projects/tpc/Text/biorxiv`
   * ...
-3. Extraction of text from PDF articles, when not available in other formats. We are working with two methods:
-  * Grobid to produce XML, and then simple extraction of text from XML. (Ian has code.)
-  * Andrew McNaughton has been using PyPDF2 
+3. Extraction of text from PDF articles, when not available in other formats. We are working with two methods that we should compare:
+  * [Grobid](https://grobid.readthedocs.io/en/latest/) to produce XML, and then simple extraction of text from XML. (Ian has code.)
+  * Andrew McNaughton has been using [PyPDF2](https://pypi.org/project/PyPDF2/)
 4. Evaluation of similarity
   * We are experimenting with [MinhashLSH](https://ekzhu.com/datasketch/lsh.html) from the [Python Datasketch library](https://github.com/ekzhu/datasketch), as used by the Pile team. 
 5. Construction of a database as outlined above.
