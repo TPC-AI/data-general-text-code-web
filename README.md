@@ -34,6 +34,8 @@ To support this work, we are engaged in the following activities:
 
 Total count: 210607728. Which contain "scientific articles"? Certainly those labeled YES. Others?
 
+<center>
+
 | Source | Count | Articles? |
 | --- | --- | --- |
 | ArXiv             | 2377741 | Yes |
@@ -58,3 +60,5 @@ Total count: 210607728. Which contain "scientific articles"? Certainly those lab
 | Ubuntu IRC        | 20067 | |
 | Wikipedia (en)    | 16939503 | |
 | YoutubeSubtitles  | 328030 | |
+
+</center>
