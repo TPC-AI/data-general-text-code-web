@@ -1,11 +1,13 @@
 # data-general-text-code-web
-Material relating to data-general-text-code-web
+Material relating to the TPC **data-general-text-code-web** group.
 
-The **data-general-text-code-web** group in TPC 
+See also [slides developed by participants in the August hackathon](https://anl.app.box.com/s/qryy4sdsvd5joytulvkivetro19s72hy/file/1276828321799).
 
 ## Scientific articles
 
-We want to assemble a de-duplicated collection of scientific articles, with for each the extracted text. (Ultimately figures and other content may also be wanted.) Our initial plan is to maintain these data on the Eagle file system at ALCF, but of course others may want to create copies elsewhere as well. [Note that not all sources allow the creation of derivative copies.]
+**Proposed goal**: Assemble a de-duplicated collection of scientific articles for use in LLM training, with for each the extracted text (initially; later, also figures, entities, citation linkages, etc.) and descriptive metadata.
+
+Initially, maintain these data on the Eagle file system at ALCF. Of course, others may want to create copies elsewhere as well--but note that not all sources allow the creation of derivative copies.
 
 Potential sources for articles include the Pile, Arxiv, DOE OSTI, PubMed, BioArxiv, etc. Different sources may have data in different formats and duplicates. Not all record DOIs or have accurate metadata. 
 
@@ -29,7 +31,7 @@ To support this work, we are engaged in the following activities:
 
 ## Pile contents
 
-Total count: 210607728. Which contain "scientific articles"? Certainly those labeled YES.
+Total count: 210607728. Which contain "scientific articles"? Certainly those labeled YES. Others?
 
 | Source | Count | Articles? |
 | --- | --- | --- |
