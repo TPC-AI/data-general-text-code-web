@@ -1,17 +1,18 @@
-# data-general-text-code-web
-Material relating to the TPC **data-general-text-code-web** group.
+# TPC data-general-text-code-web group
 
-See also [slides developed by participants in the August hackathon](https://anl.app.box.com/s/qryy4sdsvd5joytulvkivetro19s72hy/file/1276828321799).
+![Image showing a lot of books](books.png)
 
-## Scientific articles
+## A proposed initial goal (see also [slides from August hackathon](https://anl.app.box.com/s/qryy4sdsvd5joytulvkivetro19s72hy/file/1276828321799))
 
-**Proposed goal**: Assemble a de-duplicated collection of scientific articles for use in LLM training, with for each the extracted text (initially; later, also figures, entities, citation linkages, etc.) and descriptive metadata.
+Assemble a large, de-duplicated collection of scientific articles for use in LLM training, with for each the extracted text (initially; later, also figures, entities, citation linkages, etc.), each with descriptive metadata.
 
-Initially, maintain these data on the Eagle file system at ALCF. Of course, others may want to create copies elsewhere as well--but note that not all sources allow the creation of derivative copies.
+Initially, we may maintain these data on the Eagle file system at ALCF. (Of course, others may want to create copies elsewhere as well--but note that not all sources allow the creation of derivative copies.)
+
+Document contents of this collection in a database that details something like, (DOI-if-available, metadata, source, location(s)-on-tpc-storage, info about duplicates).
 
 Potential sources for articles include the Pile, Arxiv, DOE OSTI, PubMed, BioArxiv, etc. Different sources may have data in different formats and duplicates. Not all record DOIs or have accurate metadata. 
 
-We want to create a database that details something like, (DOI-if-available, metadata, source, location(s)-on-tpc-storage, info about duplicates).
+## Some potential first steps
 
 To support this work, we are engaged in the following activities:
 
