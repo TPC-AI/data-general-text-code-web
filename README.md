@@ -54,7 +54,7 @@ Total count: 210607728. Which contain "scientific articles"? Certainly those lab
 | PhilPapers        | 63875 | | Open-access philosophy publications |
 | Pile-CC           | 52441354 | | |
 | PubMed Abstracts  | 29329202 | | 30M pubmed abstracts |
-| PubMed Central    | 5679903 | Yes | |
+| PubMed Central    | 5679903 | Yes | According to [NCBI web site](https://www.ncbi.nlm.nih.gov/pmc/about/intro/), PMC had 8,386,512 full-text articles as of 2022 |
 | StackExchange     | 29529008 | | |
 | USPTO Backgrounds | 11123325 | | Background sections of US patents |
 | Ubuntu IRC        | 20067 | | |
