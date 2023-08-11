@@ -36,29 +36,29 @@ Total count: 210607728. Which contain "scientific articles"? Certainly those lab
 
 <center>
 
-| Source | Count | Articles? |
-| --- | --- | --- |
-| ArXiv             | 2377741 | Yes |
-| BookCorpus2       | 25355 | |
-| Books3            | 277655 | |
-| DM Mathematics    | 1918535 | |
-| Enron Emails      | 926132 | |
-| EuroParl          | 131723 | |
-| FreeLaw           | 5069088 | |
-| Github            | 18044218 | |
-| Gutenberg (PG-19) | 66981 | |
-| HackerNews        | 1571968 | |
-| NIH ExPorter      | 1777926 | |
-| OpenSubtitles     | 632485 | |
-| OpenWebText2      | 32333654 | |
-| PhilPapers        | 63875 | |
-| Pile-CC           | 52441354 | |
-| PubMed Abstracts  | 29329202 | |
-| PubMed Central    | 5679903 | Yes |
-| StackExchange     | 29529008 | |
-| USPTO Backgrounds | 11123325 | |
-| Ubuntu IRC        | 20067 | |
-| Wikipedia (en)    | 16939503 | |
-| YoutubeSubtitles  | 328030 | |
+| Source | Count | Articles? | Notes |
+| --- | --- | --- | --- |
+| ArXiv             | 2377741 | Yes | Mostly math, CS, physics |
+| BookCorpus2       | 25355 | | |
+| Books3            | 277655 | | |
+| DM Mathematics    | 1918535 | | |
+| Enron Emails      | 926132 | | |
+| EuroParl          | 131723 | | |
+| FreeLaw           | 5069088 | | Legal opinions |
+| Github            | 18044218 | | |
+| Gutenberg (PG-19) | 66981 | | |
+| HackerNews        | 1571968 | | |
+| NIH ExPorter      | 1777926 | | NIH awarded applications, 1985- present |
+| OpenSubtitles     | 632485 | | |
+| OpenWebText2      | 32333654 | | |
+| PhilPapers        | 63875 | | Open-access philosophy publications |
+| Pile-CC           | 52441354 | | |
+| PubMed Abstracts  | 29329202 | | 30M pubmed abstracts |
+| PubMed Central    | 5679903 | Yes | |
+| StackExchange     | 29529008 | | |
+| USPTO Backgrounds | 11123325 | | Background sections of US patents |
+| Ubuntu IRC        | 20067 | | |
+| Wikipedia (en)    | 16939503 | | |
+| YoutubeSubtitles  | 328030 | | |
 
 </center>
