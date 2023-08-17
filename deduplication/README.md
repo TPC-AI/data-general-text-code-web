@@ -12,7 +12,7 @@ The overall process consists of three major steps: precompute minhash signatures
 
 - Source code: `precompute_minhash_pile.py` and `precompute_minhash_prd.py`
 
-- Output: `/eagle/tpc/hongz/minhash/{pile, prd}/*.pkl`
+- Output: `/eagle/tpc/hongz/minhash/pile/*.pkl`
 
 This is the most time-consuming part of the process due to heavy I/O (i.e., reading every file in the corpus). To speed up the process, the code is parallelized such that the documents are distributed to all CPU cores to compute their minhash signatures, and the main process will save all the returned signatures in a pickle file. Every minhash signature is saved along with a `key` that is comprised of a file name and a line number so that the signature can be traced back to its original document.
 
@@ -35,14 +35,3 @@ Caution: based on experiments, the `lsh.insertion_session()` is NOT thread-safe,
 - Source code: `query_for_duplicates.py`
 
 In the last step, we read minhash signatures from Step 1 and query them against the LSH index built in Step 2. The code is parallelized so that the signatures are distributed to all the CPU cores. The query returns duplicated documents as tuples, in which the first element is always the key of the minhash signature used to query the index, and the second element is the key of a duplicate document found in the index.
-
-## Result: Deduplication of PILE and PRD
-
-- Output: `duplicates_PILE_PRD.csv`
-
-70788 documents in the `ArXiv` and `PubMed Central` subsets of PILE were found to have at least 1 duplicate in PRD. In total, there are 90296 `<PILE_doc, PRD_doc>` pairs of duplicated documents.
-
-
-
-
-
