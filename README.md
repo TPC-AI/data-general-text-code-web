@@ -24,8 +24,9 @@ To support this work, we are engaged in the following activities:
 3. Extraction of text from PDF articles, when not available in other formats. We are working with two methods that we should compare:
     * [Grobid](https://grobid.readthedocs.io/en/latest/) to produce XML, and then simple extraction of text from XML. (Ian has code.)
     * Andrew McNaughton has been using [PyPDF2](https://pypi.org/project/PyPDF2/)
-4. Evaluation of similarity
-    * We are experimenting with [MinhashLSH](https://ekzhu.com/datasketch/lsh.html) from the [Python Datasketch library](https://github.com/ekzhu/datasketch), as used by the Pile team. 
+4. Evaluation of similarity/de-duplication
+    * We are experimenting with [MinhashLSH](https://ekzhu.com/datasketch/lsh.html) from the [Python Datasketch library](https://github.com/ekzhu/datasketch), as used by the Pile team.
+    * See also the [RefinedWeb pipeline](https://arxiv.org/pdf/2306.01116.pdf), which uses MinHash but also a variety of other methods.
 5. Construction of a database as outlined above.
     * Nothing done yet
 
