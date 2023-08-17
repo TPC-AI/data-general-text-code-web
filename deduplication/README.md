@@ -26,7 +26,7 @@ To apply the code to another corpus (other than PILE and PRD), a custom `generat
 
 In this step, we read from the pickle files produced in Step 1 and insert all the minhash signatures to an LSH index, which requires two parameters, `num_perm` and `threshold`. The `num_perm` value should be consistent with Step 1 (default: 128). The `threshold` parameter controls the lower bound of similarity above which a pair of documents would be considered duplicates (default: 0.9). Note that the threshold is decided when building the index and it is not possible to change the threshold at query time without building another index.
 
-Technically, the index can be stored as an in-memory object. However, to enable parallelization and data persistency, Redis is used as the storage layer for the LSH index. The index will take up roughly twice as much memory as the minhash signatures do, so the index for a very large corpus (such as PRD) might exceed the available RAM of a compute node, in which case the signatures need to be partitioned and saved into different indices on different nodes.
+Technically, the index can be stored as an in-memory object. However, to enable parallelization and data persistency, Redis is used as the storage layer for the LSH index. The index will take up roughly twice as much memory as the minhash signatures do, so the index for a very large corpus might exceed the available RAM of a compute node, in which case the signatures need to be partitioned and saved into different indices on different nodes.
 
 Caution: based on experiments, the `lsh.insertion_session()` is NOT thread-safe, so it should not be shared among threads or processes.
 
