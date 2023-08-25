@@ -21,14 +21,10 @@ if __name__ == '__main__':
     nodeid = args.nodeid
     if nodeid == "01":
         port = 16301
-    elif nodeid == "02":
-        port = 16302
-    elif nodeid == "03":
-        port = 16303
     else:
         port = 16308
-    basename = b'prd'
-    sim_threshold = 0.9
+    basename = b'tpc'
+    sim_threshold = 0.8
     n_hash_funcs = 128
     lsh = MinHashLSH(
         threshold=sim_threshold, num_perm=n_hash_funcs, storage_config={
