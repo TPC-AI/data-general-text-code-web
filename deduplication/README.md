@@ -3,7 +3,7 @@
 Since the corpora are collected from a variety of sources, they may contain duplicates of the same article or articles that share large portions of their text albeit not identical (such as preprints and published articles). Having unknown duplicates in the training corpus will bias the model towards the overrepresented data, consumes unnecessary compute cycles and memory, and produce overfit models that end up memorizing those specific instances rather than learning the underlying patterns. Therefore, deduplication is a necessary step before the corpus can be used in training. However, a brute-force method comparing every pair of documents will take $O(n^2)$ time, so it is not feasible given the size of our corpus.
 
 Here we applied a technique called "minhashing", which compresses large sets in such a way that we can still deduce the similarity of the underlying sets from their compressed versions. By combining minhashing with "locality-sensitive hashing (LSH)", which focuses on pairs that are likely to be similar without investigating every pair, we can achieve sub-linear performance, making deduplicating a corpus as large as ours a possibility. 
-(References: Textbook and DataSketch Documentation).
+(See more details: [Textbook](http://infolab.stanford.edu/~ullman/mmds/ch3.pdf) and [DataSketch Documentation](https://ekzhu.com/datasketch/lsh.html)).
 
 
 The overall process consists of three major steps: precompute minhash signatures for every document, build an LSH index for the corpus, and query the index for potential duplicates.
