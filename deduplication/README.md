@@ -48,4 +48,4 @@ The code is parallelized so that the signatures are distributed to all the CPU c
 
 The deduplication pipeline was tested on the ARXIV dataset (`/eagle/tpc/hongz/arxiv_jsonl/`) and PILE dataset (`/eagle/tpc/Text/jsonl_pile/`). PILE contains documents from a variety of sources, many of which are not scientific articles and are unlikely to find duplicates in the ARXIV dataset. Therefore, only the "ArXiv" and "PubMed Central" subsets of PILE were searched for deduplication with ARXIV.
 
-93,204 documents in ARXIV were found to have at least 1 duplicate in the ArXiv and PubMed Central subsets of PILE. In total, there are 179,824 pairs of duplicated documents, suggesting that some documents in ARXIV have more than one duplicates in PILE.
+There are 187,942 files in the ARXIV dataset, and 8,057,644 files in the science subsets of PILE. 93,204 documents in ARXIV were found to have at least 1 duplicate in the ArXiv and PubMed Central subsets of PILE. In total, there are 179,824 pairs of duplicated documents, suggesting that some documents in ARXIV have more than one duplicates in PILE.
