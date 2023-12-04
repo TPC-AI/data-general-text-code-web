@@ -17,15 +17,20 @@ def insert(i: int) -> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--nodeid", help=f"Idx of the current node", type=str, required=False, default="00")
+    # parser.add_argument("--nodeid", help=f"Idx of the current node", type=str, required=False, default="00")
+    parser.add_argument("--start_file_idx", help="The starting file index to process (inclusive). Default is 0.", type=int, required=False, default=0)
+    parser.add_argument("--last_file_idx", help="The last file index (exclusive). Default is 1.", type=int, required=False, default=1)
+    parser.add_argument("--redis_port", help="The port that Redis server is listening on. Default is 6379.", type=int, required=False, default=6379)
     args = parser.parse_args()
-    nodeid = args.nodeid
-    if nodeid == "01":
-        port = 16301
-        file_idx = range(0, 30)
-    else:
-        file_idx = range(0, 2)
-        port = 16308
+    # nodeid = args.nodeid
+    file_idx = range(args.start_file_idx, args.last_file_idx)
+    port = args.port
+    # if nodeid == "01":
+    #     port = 16301
+    #     file_idx = range(0, 30)
+    # else:
+    #     file_idx = range(0, 2)
+    #     port = 16308
     
     basename = b'tpc'
     sim_threshold = 0.8
