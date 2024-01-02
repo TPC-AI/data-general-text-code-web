@@ -21,5 +21,5 @@ To support this work, we are engaged in the following activities:
     * Andrew McNaughton has been using [PyPDF2](https://pypi.org/project/PyPDF2/) and PyMuPDF (https://pymupdf.readthedocs.io/en/latest/)
     * Marker for extraction as markdown.
 4. Evaluation of similarity/de-duplication
-    * We are experimenting with [MinhashLSH](https://ekzhu.com/datasketch/lsh.html) from the [Python Datasketch library](https://github.com/ekzhu/datasketch), as used by the Pile team.
+    * We are experimenting with [MinhashLSH](https://ekzhu.com/datasketch/lsh.html) from the [Python Datasketch library](https://github.com/ekzhu/datasketch), as used by the Pile team: see [code assembled by Hong Zhi](https://github.com/TPC-AI/data-general-text-code-web/tree/main/deduplication).
     * See also the [RefinedWeb pipeline](https://arxiv.org/pdf/2306.01116.pdf), which uses MinHash but also a variety of other methods.
