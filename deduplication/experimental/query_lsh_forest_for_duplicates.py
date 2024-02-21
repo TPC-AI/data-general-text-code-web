@@ -8,6 +8,7 @@ import json
 import csv
 import sys
 import numpy as np
+import time
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -68,6 +69,8 @@ def load_minhashes_to_forest(indir: str):
                 lsh.add(key, minhash)
 
 if __name__ == '__main__':
+    start_program = time.perf_counter()
+
     args = parse_args()
 
     sim_threshold = 0.8
@@ -81,20 +84,28 @@ if __name__ == '__main__':
     querydir = args.query
 
     # load minhashes into forest to query against
+    s = time.perf_counter()
     load_minhashes_to_forest(indir)
+    secs_read_minhashes = time.perf_counter() - s
 
     # this function must be called to index the forest, otherwise search operations
     # will return no results
+    s = time.perf_counter()
     lsh.index()
+    secs_index_forest = time.perf_counter() - s
 
     is_empty = lsh.is_empty()
     if is_empty:
         raise Exception(f"LSH Forest is empty (likely could not load minhash signatures from path: {indir})")
 
     # query minhashes from args.query against forest
+    s = time.perf_counter()
+    avg_time_query_file = 0
+    n = 0
     with open(outfile, 'w') as fout:
         writer = csv.writer(fout)
         for minhashfile in glob(f'{querydir}/*.pkl'):
+            s_file = time.perf_counter()
             with open(minhashfile, 'rb') as fin:
                 minhash_list = pickle.load(fin)
                 fname = minhashfile.split('/')[-1]
@@ -103,3 +114,19 @@ if __name__ == '__main__':
                         if result:
                             writer.writerows(result)
                         pbar.update()
+
+            elapsed_file = time.perf_counter() - s_file
+            avg_time_query_file += elapsed_file
+            n += 1
+
+    avg_time_query_file /= n
+    secs_query_all = time.perf_counter() - s
+    elapsed_program = time.perf_counter() - start_program
+
+    print("\n")
+    print(f"Time to load minhashes: {secs_read_minhashes} seconds")
+    print(f"Time to index forest: {secs_index_forest} seconds")
+    print(f"Average time to query pickle file: {avg_time_query_file} seconds")
+    print(f"Time to query all {n} pickle files: {secs_query_all} seconds")
+    print(f"Total program runtime: {elapsed_program} seconds")
+    print("\n")
