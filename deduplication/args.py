@@ -5,7 +5,8 @@ import argparse
 def parse_args():
 	cmd_args = " ".join(sys.argv)
 	parser = argparse.ArgumentParser(
-		description="CLI Tool for Text Deduplication using MinHashLSH"
+		description="CLI Tool for Text Deduplication using MinHashLSH",
+		formatter_class=argparse.RawTextHelpFormatter
 	)
 	group = parser.add_mutually_exclusive_group(required=True)
 	group.add_argument(
@@ -30,8 +31,8 @@ def parse_args():
 		nargs="+",
 	)
 	parser.add_argument(
-		"--input-dir",
-		help="Directory or directories where jsonl data is stored",
+		"--input",
+		help="<Single or Multi workflow> Directory or directories where jsonl data is stored\n<File workflow> JSONL file to deduplicate",
 		required=True,
 		nargs="+",
 	)
@@ -42,20 +43,25 @@ def parse_args():
 		nargs="+",
 	)
 	parser.add_argument(
-		"--sim_threshold",
-		help="Jaccard Similarity threshold for deduplication, should be in [0, 1]",
+		"--output-file",
+		help="Path to csv file where duplicates will be logged",
+		required=True,
+	)
+	parser.add_argument(
+		"--sim-threshold",
+		help="Jaccard Similarity threshold for deduplication, should be in [0, 1]. Default is 0.8",
 		default=0.8,
 	)
 	parser.add_argument(
 		"--num-perm",
-		help="Number of hash functions for MinHashing",
+		help="Number of hash functions for MinHashing. Default is 128",
 		default=128,
 	)
 	parser.add_argument(
 		"--mode",
 		default="bloom",
 		choices=["lsh", "bloom"],
-		help="Whether to use classic MinHashLSH or LSHBloom",
+		help="Whether to use classic MinHashLSH or LSHBloom, default is LSHBloom",
 	)
 	parser.add_argument(
 		"--save-dir",
@@ -72,14 +78,19 @@ def parse_args():
 	parser.add_argument(
 		"--fp",
 		type=float,
-		help="<Bloom Mode> False Positive rate for Bloom Filter",
+		help="<Bloom Mode> False Positive rate for Bloom Filter, should be in [0,1]. Default is 0.01",
 		default=0.01,
 	)
 	parser.add_argument(
 		"--redis_port",
-		help="<LSH mode> The port that Redis server is listening on. Default is 6379.",
+		help="<LSH mode> The port that Redis server is listening on. Default is 6379",
 		type=int,
 		default=6379,
+	)
+	parser.add_argument(
+		"--skip-minhashing",
+		help="If set, will skip the minhashing step of each workflow (useful if minhashes have been precomputed at minhash_dir)",
+		action="store_false"
 	)
 
 	return parser.parse_args()
