@@ -2,7 +2,7 @@ import csv
 import os
 
 
-def write_duplicates_to_csv(duplicates, csvpath, header=None):
+def write_duplicates_to_csv(duplicates, csvpath, corpus_name, header=None):
     """
     Append a list of duplicates to a csv file
     """
@@ -11,4 +11,4 @@ def write_duplicates_to_csv(duplicates, csvpath, header=None):
         if header is not None and os.stat(csvpath).st_size == 0:
             writer.writerow(header)
         writer = csv.writer(fout)
-        writer.writerows(duplicates)
+        writer.writerows((corpus_name,) + duplicates)

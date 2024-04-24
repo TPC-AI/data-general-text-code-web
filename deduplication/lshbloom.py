@@ -33,7 +33,7 @@ class LSHBloom:
         self.minhash_dir = minhash_dir
         self.lsh = MinHashLSHBloom(**lsh_params)
 
-    def deduplicate_corpus(self) -> List[str]:
+    def deduplicate_corpus(self) -> List[Tuple[str]]:
         """
         Deduplicates documents in the given corpus and adds them to the LSH index if appropriate.
         Documents without existing duplicates will be stored in the LSH index for future deduplication.
@@ -52,7 +52,7 @@ class LSHBloom:
 
         return duplicate_list
 
-    def deduplicate_and_insert(self, params: Tuple) -> List[str]:
+    def deduplicate_and_insert(self, params: Tuple) -> List[Tuple[str]]:
         """
         Deduplicates a MinHash signature corresponding to a document using the provided LSH index.
         If the document is not duplicated in the LSH index, it is added to the index.
@@ -70,17 +70,18 @@ class LSHBloom:
         # insert if not duplicated in index
         if not result:
             self.lsh.insert(m_query)
+            return None
 
-        return [key]
+        return [(key,)]
 
-    def deduplicate_minhash_file(self, minhashfile: str) -> List[str]:
+    def deduplicate_minhash_file(self, minhashfile: str) -> List[Tuple[str]]:
         """
         Deduplicate documents in the given minhash file and adds them to the LSH index if appropriate.
         Documents without existing duplicates will be stored in the LSH index for future deduplication.
 
         minhashfile - path to file of minhash signatures stored in pickle format
 
-        returns a list of tuples of the form (key, dup_key) representing duplicated documents,
+        returns a list of keys representing duplicated documents,
         key is from the corpus we are currently considering and dup_key is from the LSH index.
 
         Note: currently, this should only be run through deduplicate_corpus in order to ensure instantiation of the lsh object

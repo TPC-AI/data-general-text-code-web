@@ -20,7 +20,7 @@ class LSHIndex:
 
     lsh_params = {...}
     index = LSHIndex(minhashdir, lsh_params)
-    index.deduplicate_corpus() # creates index and stores based on lsh_params
+    duplicates = index.deduplicate_corpus() # creates index and stores based on lsh_params
     ```
     """
     def __init__(self, minhash_dir: str, lsh_params: Dict):
@@ -33,7 +33,7 @@ class LSHIndex:
         self.minhash_dir = minhash_dir
         self.lsh = MinHashLSH(**lsh_params)
 
-    def deduplicate_corpus(self) -> List[Tuple]:
+    def deduplicate_corpus(self) -> List[Tuple[str]]:
         """
         Deduplicates documents in the given corpus and adds them to the LSH index if appropriate.
         Documents without existing duplicates will be stored in the LSH index for future deduplication.
@@ -53,7 +53,7 @@ class LSHIndex:
 
         return duplicate_list
 
-    def deduplicate_and_insert(self, params: Tuple) -> List[Tuple]:
+    def deduplicate_and_insert(self, params: Tuple) -> List[Tuple[str]]:
         """
         Deduplicates a MinHash signature corresponding to a document using the provided LSH index.
         If the document is not duplicated in the LSH index, it is added to the index.
@@ -74,7 +74,7 @@ class LSHIndex:
 
         return [(key, dup_key) for dup_key in result]
 
-    def deduplicate_minhash_file(self, minhashfile: str) -> List[Tuple]:
+    def deduplicate_minhash_file(self, minhashfile: str) -> List[Tuple[str]]:
         """
         Deduplicate documents in the given minhash file and adds them to the LSH index if appropriate.
         Documents without existing duplicates will be stored in the LSH index for future deduplication.

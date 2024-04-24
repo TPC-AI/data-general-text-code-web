@@ -21,13 +21,14 @@ class MinHasher:
 	m.process() # signatures will be stored in outdir
 	```
 	"""
-	def __init__(self, jsonl_dir, output_dir):
+	def __init__(self, jsonl_dir: str, output_dir: str, num_perm: int = 128):
 		"""
 		jsonl_dir: path to jsonl files for the given corpus
 		output_dir: path to save minhash signatures to for the given corpus
 		"""
 		self.input_dir = jsonl_dir
 		self.output_dir = output_dir
+		self.num_perm = num_perm
 
 	def process(self):
 		"""
@@ -56,7 +57,7 @@ class MinHasher:
 		s = set(line.split())
 		if not s:
 			return None
-		m = MinHash(num_perm=128)
+		m = MinHash(num_perm=self.num_perm)
 		for d in s:
 			m.update(d.encode("utf8"))
 		# generate a unique key for this document
