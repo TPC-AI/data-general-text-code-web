@@ -3,7 +3,7 @@ from lsh import LSHIndex
 from lshbloom import LSHBloom
 from writers import write_duplicates_to_csv
 from typing import List
-from glob import glob
+import os
 
 # <<< MinHashLSH >>>
 
@@ -101,6 +101,13 @@ def dedup_single_file_lsh(
 
 # <<< LSHBloom >>>
 
+def clear_dir(save_dir):
+    if os.path.exists(save_dir):
+        rm_files = [os.path.join(save_dir, f) for f in save_dir if ".bf" in f or '.csv' in f]
+        for f in rm_files:
+            os.remove(f)
+
+
 # workflow for deduping single corpus against the Bloom Index
 def dedup_single_bloom(
     input_dir: str,
@@ -113,7 +120,10 @@ def dedup_single_bloom(
     n_hash_funcs: int = 128,
     save_dir: str = "./",
     compute_minhashes: bool = True,
+    clear: bool = False,
 ):
+    if clear:
+        clear_dir(save_dir)
     
     lsh_params = {
         "threshold": sim_threshold,
@@ -144,9 +154,13 @@ def dedup_multi_bloom(
     n_hash_funcs: int = 128,
     save_dir: str = "./",
     compute_minhashes: bool = True,
+    clear: bool = False,
 ):
     assert len(input_dirs) == len(minhash_dirs) == len(corpus_names), \
         f"Expected len(input_dirs) == len(minhash_dirs) == len(corpus_names), got {len(input_dirs)}, {len(minhash_dirs)}, {len(corpus_names)}"
+
+    if clear:
+        clear_dir(save_dir)
 
     for i in range(len(input_dirs)):
         dedup_single_bloom(
@@ -160,6 +174,7 @@ def dedup_multi_bloom(
             n_hash_funcs,
             save_dir,
             compute_minhashes,
+            clear=False
         )
 
 def dedup_single_file_bloom(
@@ -173,7 +188,11 @@ def dedup_single_file_bloom(
     n_hash_funcs: int = 128,
     save_dir: str = "./",
     compute_minhashes: bool = True,
+    clear: bool = False,
 ):
+    if clear:
+        clear_dir(save_dir)
+
     lsh_params = {
         "threshold": sim_threshold,
         "num_perm": n_hash_funcs,
@@ -188,6 +207,6 @@ def dedup_single_file_bloom(
 
     fname = input_file.split("/")[-1]
     minhash_file = f"{minhash_dir}/{fname[:-6]}.pkl"
-    index = LSHBloom(minhash_dir, lsh_params, n_hash_funcs)
+    index = LSHBloom(minhash_dir, lsh_params)
     duplicates = index.deduplicate_minhash_file(minhash_file)
     write_duplicates_to_csv(duplicates, csvfile, corpus_name, header=["dup_key"])

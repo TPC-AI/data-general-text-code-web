@@ -9,6 +9,44 @@ from functools import partial
 
 # TODO check if minhashes already exist, recompute only if forced
 
+def compute_minhash_jsonl(t, fname, num_perm):
+	lineNo, line = t
+	lineNo += 1
+	line = json.loads(line)
+	line = line.get("text", "")
+	s = set(line.split())
+	if not s:
+		return None
+	m = MinHash(num_perm=num_perm)
+	for d in s:
+		m.update(d.encode("utf8"))
+	# generate a unique key for this document
+	key = f"{fname}-{lineNo}"
+	return (key, m)
+
+def compute_minhash_for_file(infile: str, output_dir: str, num_perm: int):
+	"""
+	Compute minhash signatures for a given jsonl file with the format specified for
+	'compute_minhash_jsonl' above.
+
+	infile is the path to the singular jsonl file
+	will store the minhash signatures in self.output_dir
+	"""
+	n = 50000
+	fname = infile.split("/")[-1]
+	with open(infile) as fin, Pool(32) as p, tqdm(total=n, desc=fname) as pbar:
+		minhash_list = list()
+		partial_compute_minhash = partial(compute_minhash_jsonl, fname=fname, num_perm=num_perm)
+		for result in p.imap_unordered(partial_compute_minhash, enumerate(fin)):
+		# for t in enumerate(fin):
+			# result = partial_compute_minhash(t)	
+			if result:
+				minhash_list.append(result)
+				pbar.update()
+		with open(f"{output_dir}/{fname[:-6]}.pkl", "wb") as fp:
+			pickle.dump(minhash_list, fp)
+		print(f"Generated MinHash for {len(minhash_list):,} documents in {fname}")
+
 class MinHasher:
 	"""
 	Handles computing minhash signatures using datasketch
@@ -36,7 +74,7 @@ class MinHasher:
 		'self.compute_minhash_jsonl'.
 		"""
 		for infile in glob(f"{self.input_dir}/*.jsonl"):
-			self.compute_minhash_for_file(infile, self.output_dir)
+			self.compute_minhash_for_file(infile)
 
 	def compute_minhash_jsonl(self, t: tuple, fname: str) -> Optional[tuple]:
 		"""
@@ -50,19 +88,7 @@ class MinHasher:
 			text: {'Some text for training...'}
 		}
 		"""
-		lineNo, line = t
-		lineNo += 1
-		line = json.loads(line)
-		line = line.get("text", "")
-		s = set(line.split())
-		if not s:
-			return None
-		m = MinHash(num_perm=self.num_perm)
-		for d in s:
-			m.update(d.encode("utf8"))
-		# generate a unique key for this document
-		key = f"{fname}-{lineNo}"
-		return (key, m)
+		return compute_minhash_jsonl(t, fname, self.num_perm)
 
 	def compute_minhash_for_file(self, infile: str):
 		"""
@@ -72,16 +98,5 @@ class MinHasher:
 		infile is the path to the singular jsonl file
 		will store the minhash signatures in self.output_dir
 		"""
-		n = 50000
-		fname = infile.split("/")[-1]
-		with open(infile) as fin, Pool(32) as p, tqdm(total=n, desc=fname) as pbar:
-			minhash_list = list()
-			partial_compute_minhash = partial(self.compute_minhash_jsonl, fname=fname)
-			for result in p.imap_unordered(partial_compute_minhash, enumerate(fin)):
-				if result:
-					minhash_list.append(result)
-					pbar.update()
-			with open(f"{self.output_dir}/{fname[:-6]}.pkl", "wb") as fp:
-				pickle.dump(minhash_list, fp)
-			print(f"Generated MinHash for {len(minhash_list):,} documents in {fname}")
+		compute_minhash_for_file(infile, self.output_dir, self.num_perm)
 

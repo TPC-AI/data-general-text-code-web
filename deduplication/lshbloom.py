@@ -1,11 +1,9 @@
 from tqdm.autonotebook import tqdm
 from multiprocessing import Pool
-from datasketch import MinHash, MinHashLSHBloom
-from typing import Optional, List, Tuple, Dict
-from glob import glob
-import pickle
-import json
+from datasketch import MinHashLSHBloom
+from typing import List, Tuple, Dict
 from functools import partial
+import pickle
 import os
 
 class LSHBloom:
@@ -90,8 +88,10 @@ class LSHBloom:
         with open(minhashfile, "rb") as fin:
             minhash_list = pickle.load(fin)
             fname = minhashfile.split("/")[-1]
-            with Pool(32) as p, tqdm(total=len(minhash_list), desc=fname) as pbar:
-                for result in p.imap_unordered(self.deduplicate_and_insert, minhash_list):
+            # can't multiprocess here as insertion requires C++ dependencies that are not compatible with pickle
+            with tqdm(total=len(minhash_list), desc=fname) as pbar:
+                for i in range(len(minhash_list)):
+                    result = self.deduplicate_and_insert(minhash_list[i])
                     if result:
                         duplicate_list.extend(result)
                     pbar.update()

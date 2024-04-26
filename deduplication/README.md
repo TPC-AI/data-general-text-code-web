@@ -1,51 +1,73 @@
-# Deduplication of a Large Corpus with MinHashLSH
+# Install Dependencies
+`pip install -r requirements.txt`
 
-Since the corpora are collected from a variety of sources, they may contain duplicates of the same article or articles that share large portions of their text albeit not identical (such as preprints and published articles). Having unknown duplicates in the training corpus will bias the model towards the overrepresented data, consumes unnecessary compute cycles and memory, and produce overfit models that end up memorizing those specific instances rather than learning the underlying patterns. Therefore, deduplication is a necessary step before the corpus can be used in training. However, a brute-force method comparing every pair of documents will take $O(n^2)$ time, so it is not feasible given the size of our corpus.
+# Usage
 
-Here we applied a technique called "minhashing", which compresses large sets in such a way that we can still deduce the similarity of the underlying sets from their compressed versions. By combining minhashing with "locality-sensitive hashing (LSH)", which focuses on pairs that are likely to be similar without investigating every pair, we can achieve sub-linear performance, making deduplicating a corpus as large as ours a possibility. 
-(See more details: [Textbook](http://infolab.stanford.edu/~ullman/mmds/ch3.pdf) and [DataSketch Documentation](https://ekzhu.com/datasketch/lsh.html)).
+```
+usage: __main__.py [-h] (--single | --multi | --file) --name NAME [NAME ...] --input INPUT [INPUT ...] --minhash-dir
+                   MINHASH_DIR [MINHASH_DIR ...] --output-file OUTPUT_FILE [--sim-threshold SIM_THRESHOLD]
+                   [--num-perm NUM_PERM] [--mode {lsh,bloom}] --save-dir SAVE_DIR -n NUM [--fp FP] [--clear]
+                   [--redis_port REDIS_PORT] [--skip-minhashing]
 
+CLI Tool for Text Deduplication using MinHashLSH
 
-The overall process consists of three major steps: precompute minhash signatures for every document, build an LSH index for the corpus, and query the index for potential duplicates.
+options:
+  -h, --help            show this help message and exit
+  --single              Deduplicate a single corpus against the index
+  --multi               Deduplicate multiple corpora against the index
+  --file                Deduplicate a single JSONL file (may have multiple documents) against the index
+  --name NAME [NAME ...]
+                        Name(s) of corpus we are deduplicating
+  --input INPUT [INPUT ...]
+                        <Single or Multi workflow> Directory or directories where jsonl data is stored
+                        <File workflow> JSONL file to deduplicate
+  --minhash-dir MINHASH_DIR [MINHASH_DIR ...]
+                        Output directory where pickled minhash signatures will be stored
+  --output-file OUTPUT_FILE
+                        Path to csv file where duplicates will be logged
+  --sim-threshold SIM_THRESHOLD
+                        Jaccard Similarity threshold for deduplication, should be in [0, 1]. Default is 0.8
+  --num-perm NUM_PERM   Number of hash functions for MinHashing. Default is 128
+  --mode {lsh,bloom}    Whether to use classic MinHashLSH or LSHBloom, default is LSHBloom
+  --save-dir SAVE_DIR   <Bloom Mode (Required)> Directory where Bloom Index will be stored
+  -n NUM, --num NUM     <Bloom Mode (Required)> Total size of text dataset in number of documents
+  --fp FP               <Bloom Mode> False Positive rate for Bloom Filter, should be in [0,1]. Default is 0.01
+  --clear               <Bloom Mode> If set, will remove the bloom filter index in save-dir as well as any results csv and start from scratch (Warning: this can not be undone)
+  --redis_port REDIS_PORT
+                        <LSH mode> The port that Redis server is listening on. Default is 6379
+  --skip-minhashing     If set, will skip the minhashing step of each workflow (useful if minhashes have been precomputed at minhash_dir)
+```
 
-## Step 1. Precompute minhash signatures
+# Overview
+This repo has two deduplication algorithms: vanilla MinHashLSH which uses a redis backend and LSHBloom which uses memory-mapped bloom filters as a backend. By default we use LSHBloom since for large corpora it is far more memory efficient (and for many TB of documents this is significantly more feasible to acquire the necessary resources for). 
 
-- Source code: `precompute_minhash_pile.py` and `precompute_minhash_arxiv.py`
+If you are using LSHBloom then the index will be stored in whatever `save-dir` you specify when running the CLI. To continue to deduplicate against an existing index, just specify the same `save-dir` on subsequent runs and the tool will load the existing Bloom Filters from disk (ensuring that you deduplicate against whatever documents were already inserted in previous runs). You can use the flag `--clear` to delete the existing index and start from scratch, but this is irreversible and shouldn't be used unless you're intending to rerun every deduplication workflow you've run in the past. Importantly the `--num` parameter should be set to the total expected size of the text dataset you intend to process, so for example if you are currently processing subset A but you know that you will be processing subsets B, C, and D in the future a good value for `--num` is the total number of documents present in all four subsets (or a suitable approximation/upperbound). This parameter is used to set the size of our bloom filters and is ignored if the filters already exist.
 
-- Output: `/eagle/tpc/hongz/minhash/pile/*.pkl`
+For MinHashLSH you'll need to start a redis server, and provide the port number that it is listening on. Similarly to deduplicate against an existing index, just run that redis server and point the tool towards the appropriate port. The only way to clear this index is to delete the redis database itself.
 
-This is the most time-consuming part of the process due to heavy I/O (i.e., reading every file in the corpus). To speed up the process, the code is parallelized such that the documents are distributed to all CPU cores to compute their minhash signatures, and the main process will save all the returned signatures in a pickle file. 
+To speed up execution, you may choose to skip the minhashing step IF you have already precomputed the minhash signatures using the `--skip-minhashing` flag. In this scenario the tool will skip attempting to minhash files and will simply read whatever minhash files are present in `minhash-dir`. 
 
-Each minhash signature is stored together with a `key` that provides a unique identifier for a document in the corpus. In the current implementation, the `key` consists of the name of the source file where the document is stored and the line number that indicates where the document starts within that source file.
+Additionally, you will have to provide an output path for a csv file where the tool will append the duplicates for the corpora you are currently processing. 
 
+# Recipes
 
-## Step 2. Build the LSH index (in Redis)
+Add `--skip-minhashing` and `--clear` as needed.
 
-- Source code: `build_lsh_index.py`
+## Deduplicate a single corpus internally
 
-- Output: `/eagle/tpc/hongz/minhashlsh_redis_dump/*.rdb`
+```shell
+python __main__.py --single --name acm_test --input ~/data/acm_test/ --minhash-dir ./project/minhash/ACM_test/ --save-dir ./project/testsingle/ --output-file ./project/testsingle/result.csv --num 1721 
+```
 
-In this step, we read from the pickle files produced in [Step 1](#step-1-precompute-minhash-signatures) and insert all the minhash signatures to an LSH index, which requires two parameters, `num_perm` and `threshold`. The `num_perm` value should be consistent with [Step 1](#step-1-precompute-minhash-signatures) (default: 128). The `threshold` parameter controls the lower bound of similarity above which a pair of documents would be considered duplicates (default: 0.8). Note that the threshold is decided when building the index and it is not possible to change the threshold at query time without building another index.
+## Deduplicate multiple corpora against one another
 
-Technically, the index can be stored as an in-memory object. However, to enable parallelization and data persistency, Redis is used as the storage layer for the LSH index. The index will take up roughly twice as much memory as the minhash signatures do, so the index for a very large corpus might exceed the available RAM of a compute node, in which case the signatures need to be partitioned and saved into different indices on different nodes.
+```shell
+# sizeof(A+B) = 1600000
 
-When Redis is used as the storage backend instead of an in-memory data structure, it is important to set a specific `basename` for the LSH index. This is necessary because multiple indices may be stored in the same Redis database. To query an index stored in Redis, the same `basename` must be used to initialize the LSH object. Otherwise, queries will always result in empty responses. In the current implementation, the `basename` is set to the string `"tpc"`.
+python __main__.py --multi --name acm_test rp1_arxiv --input ~/data/acm_test/ ~/data/RP1/arxiv/ --minhash-dir ./project/minhash/ACM_test/  ./project/minhash/RP1_arxiv/ --save-dir ./project/testmulti/ --output-file ./project/testmulti/result.csv --num 1600000 
+```
 
-According to our experiments, `lsh.insertion_session()` is NOT thread-safe, so it should not be shared among threads or processes.
-
-## Step 3: Query for duplicates
-
-- Source code: `query_for_duplicates.py`
-
-In the last step, we read minhash signatures from [Step 1](#step-1-precompute-minhash-signatures) and query them against the LSH index built in [Step 2](#step-2-build-the-lsh-index-in-redis). It is essential to provide the `basename` when initializing the LSH object if the LSH index is saved in Redis. The `basename` should match the one used in [Step 2](#step-2-build-the-lsh-index-in-redis); otherwise, the queries will yield no results.
-
-The code is parallelized so that the signatures are distributed to all the CPU cores. The query returns duplicated documents as tuples, in which the first element is always the key of the minhash signature used to query the index, and the second element is the key of a duplicate document found in the index.
-
-
-## Result: Deduplication of ARXIV and PILE
-
-- Output: `duplicates_arxiv_pile_sci.csv`
-
-The deduplication pipeline was tested on the ARXIV dataset (`/eagle/tpc/hongz/arxiv_jsonl/`) and PILE dataset (`/eagle/tpc/Text/jsonl_pile/`). PILE contains documents from a variety of sources, many of which are not scientific articles and are unlikely to find duplicates in the ARXIV dataset. Therefore, only the "ArXiv" and "PubMed Central" subsets of PILE were searched for deduplication with ARXIV.
-
-There are 187,942 files in the ARXIV dataset, and 8,057,644 files in the science subsets of PILE. 93,204 documents in ARXIV were found to have at least 1 duplicate in the ArXiv and PubMed Central subsets of PILE. In total, there are 179,824 pairs of duplicated documents, suggesting that some documents in ARXIV have more than one duplicates in PILE.
+## Deduplicate a single JSONL file (of potentially many documents)
+```shell
+python __main__.py --file --name pes2o --input ~/data/peS2o/JSON_data/train-00000-of-00020.json --minhash-dir ./project/minhash/peS2o/ --save-dir ./project/testmulti/ --output-file ./project/testmulti/result.csv --num 1600000
+```

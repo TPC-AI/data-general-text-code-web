@@ -1,0 +1,5 @@
+datasketch @ git+https://github.com/123epsilon/datasketch.git@060a32b4b4a2272d77480dd633a1bf770678ba49
+numpy==1.26.4
+pybloomfiltermmap3==0.5.7
+scipy==1.13.0
+tqdm==4.66.2

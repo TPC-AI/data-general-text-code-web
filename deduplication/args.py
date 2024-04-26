@@ -82,6 +82,11 @@ def parse_args():
 		default=0.01,
 	)
 	parser.add_argument(
+		"--clear",
+		help="<Bloom Mode> If set, will remove the bloom filter index in save-dir as well as any results csv and start from scratch (Warning: this can not be undone)",
+		action="store_true"
+	)
+	parser.add_argument(
 		"--redis_port",
 		help="<LSH mode> The port that Redis server is listening on. Default is 6379",
 		type=int,
@@ -90,7 +95,7 @@ def parse_args():
 	parser.add_argument(
 		"--skip-minhashing",
 		help="If set, will skip the minhashing step of each workflow (useful if minhashes have been precomputed at minhash_dir)",
-		action="store_false"
+		action="store_true"
 	)
 
 	return parser.parse_args()

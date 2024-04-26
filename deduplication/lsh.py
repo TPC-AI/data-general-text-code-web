@@ -1,11 +1,8 @@
 from tqdm.autonotebook import tqdm
 from multiprocessing import Pool
-from datasketch import MinHash, MinHashLSH
-from typing import Optional, List, Tuple, Dict
-from glob import glob
+from datasketch import MinHashLSH
+from typing import List, Tuple, Dict
 import pickle
-import json
-from functools import partial
 import os
 
 class LSHIndex:
