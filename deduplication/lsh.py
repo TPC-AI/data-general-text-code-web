@@ -87,8 +87,9 @@ class LSHIndex:
         with open(minhashfile, "rb") as fin:
             minhash_list = pickle.load(fin)
             fname = minhashfile.split("/")[-1]
-            with Pool(32) as p, tqdm(total=len(minhash_list), desc=fname) as pbar:
-                for result in p.imap_unordered(self.deduplicate_and_insert, minhash_list):
+            with tqdm(total=len(minhash_list), desc=fname) as pbar:
+                for i in range(len(minhash_list)):
+                    result = self.deduplicate_and_insert(minhash_list[i])
                     if result:
                         duplicate_list.extend(result)
                     pbar.update()

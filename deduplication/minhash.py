@@ -6,6 +6,7 @@ from glob import glob
 import pickle
 import json
 from functools import partial
+import os
 
 # TODO check if minhashes already exist, recompute only if forced
 
@@ -67,6 +68,9 @@ class MinHasher:
 		self.input_dir = jsonl_dir
 		self.output_dir = output_dir
 		self.num_perm = num_perm
+
+		os.makedirs(self.output_dir, exist_ok=True)
+
 
 	def process(self):
 		"""

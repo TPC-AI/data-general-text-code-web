@@ -6,6 +6,10 @@ def write_duplicates_to_csv(duplicates, csvpath, corpus_name, header=None):
     """
     Append a list of duplicates to a csv file
     """
+    # just in case, make output dir
+    dirname = os.path.dirname(csvpath)
+    os.makedirs(dirname, exist_ok=True)
+    # prepend corpus name to each csv row for organization
     dups = [(corpus_name,) + d for d in duplicates]
     with open(csvpath, "a+") as fout:
         writer = csv.writer(fout)
