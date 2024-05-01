@@ -35,7 +35,7 @@ options:
   --mode {lsh,bloom}    Whether to use classic MinHashLSH or LSHBloom, default is LSHBloom
   --save-dir SAVE_DIR   <Bloom Mode (Required)> Directory where Bloom Index will be stored
   -n NUM, --num NUM     <Bloom Mode (Required)> Total size of text dataset in number of documents
-  --fp FP               <Bloom Mode> False Positive rate for Bloom Filter, should be in [0,1]. Default is 0.01
+  --fp FP               <Bloom Mode> False Positive rate for Bloom Filter, should be in [0,1]. Default is 0.001 (0.1%)
   --clear               <Bloom Mode> If set, will remove the bloom filter index in save-dir as well as any results csv and start from scratch (Warning: this can not be undone)
   --redis_port REDIS_PORT
                         <LSH mode> The port that Redis server is listening on. Default is 6379
