@@ -1,5 +1,5 @@
-from workflows import *
-from args import parse_args
+from deduplication.workflows import *
+from deduplication.args import parse_args
 
 args = parse_args()
 

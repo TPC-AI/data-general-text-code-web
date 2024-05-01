@@ -1,5 +1,9 @@
-# Install Dependencies
-`pip install -r requirements.txt`
+# Install
+```bash
+git clone https://github.com/TPC-AI/data-general-text-code-web.git
+cd data-general-text-code-web/
+pip install .
+```
 
 # Usage
 
@@ -56,7 +60,7 @@ Add `--skip-minhashing` and `--clear` as needed.
 ## Deduplicate a single corpus internally
 
 ```shell
-python __main__.py --single --name acm_test --input ~/data/acm_test/ --minhash-dir ./project/minhash/ACM_test/ --save-dir ./project/testsingle/ --output-file ./project/testsingle/result.csv --num 1721 
+python -m deduplication --single --name acm_test --input ~/data/acm_test/ --minhash-dir ./project/minhash/ACM_test/ --save-dir ./project/testsingle/ --output-file ./project/testsingle/result.csv --num 1721 
 ```
 
 ## Deduplicate multiple corpora against one another
@@ -64,10 +68,10 @@ python __main__.py --single --name acm_test --input ~/data/acm_test/ --minhash-d
 ```shell
 # sizeof(A+B) = 1600000
 
-python __main__.py --multi --name acm_test rp1_arxiv --input ~/data/acm_test/ ~/data/RP1/arxiv/ --minhash-dir ./project/minhash/ACM_test/  ./project/minhash/RP1_arxiv/ --save-dir ./project/testmulti/ --output-file ./project/testmulti/result.csv --num 1600000 
+python -m deduplication --multi --name acm_test rp1_arxiv --input ~/data/acm_test/ ~/data/RP1/arxiv/ --minhash-dir ./project/minhash/ACM_test/  ./project/minhash/RP1_arxiv/ --save-dir ./project/testmulti/ --output-file ./project/testmulti/result.csv --num 1600000 
 ```
 
 ## Deduplicate a single JSONL file (of potentially many documents)
 ```shell
-python __main__.py --file --name pes2o --input ~/data/peS2o/JSON_data/train-00000-of-00020.json --minhash-dir ./project/minhash/peS2o/ --save-dir ./project/testmulti/ --output-file ./project/testmulti/result.csv --num 1600000
+python -m deduplication --file --name pes2o --input ~/data/peS2o/JSON_data/train-00000-of-00020.json --minhash-dir ./project/minhash/peS2o/ --save-dir ./project/testmulti/ --output-file ./project/testmulti/result.csv --num 1600000
 ```

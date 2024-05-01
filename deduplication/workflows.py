@@ -1,7 +1,7 @@
-from minhash import MinHasher
-from lsh import LSHIndex
-from lshbloom import LSHBloom
-from writers import write_duplicates_to_csv
+from deduplication.minhash import MinHasher
+from deduplication.lsh import LSHIndex
+from deduplication.lshbloom import LSHBloom
+from deduplication.writers import write_duplicates_to_csv
 from typing import List
 import os
 
