@@ -78,7 +78,7 @@ def parse_args():
 	parser.add_argument(
 		"--fp",
 		type=float,
-		help="<Bloom Mode> False Positive rate for Bloom Filter, should be in [0,1]. Default is 0.001 (0.1%)",
+		help="<Bloom Mode> False Positive rate for Bloom Filter, should be in [0,1]. Default is 0.001 (0.1%%)",
 		default=0.001,
 	)
 	parser.add_argument(
