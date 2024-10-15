@@ -1,10 +1,23 @@
-from tqdm.autonotebook import tqdm
-from multiprocessing import Pool
-from datasketch import MinHashLSHBloom
-from typing import List, Tuple, Dict
-from functools import partial
-import pickle
 import os
+import pickle
+from typing import Any, Dict, List, Tuple
+
+from datasketch import MinHashLSHBloom
+from tqdm.autonotebook import tqdm
+
+
+def run_LSHBloom(
+    minhash_dir: str, lsh_params: dict[str, Any], csvfile: str, corpus_name: str
+) -> None:
+    """Run the LSHBloom deduplication process on a corpus of documents."""
+    # TODO: this is a bit of an overreach, need to think about how to not propogate
+    # duplicates back to pilot if running with parsl
+    from deduplication.writers import write_duplicates_to_csv
+
+    index = LSHBloom(minhash_dir, lsh_params)
+    duplicates = index.deduplicate_corpus()
+    write_duplicates_to_csv(duplicates, csvfile, corpus_name, header=["dup_key"])
+
 
 class LSHBloom:
     """
@@ -14,13 +27,14 @@ class LSHBloom:
     ```
     # minhash signatures are computed or already exist in minhashdir
     m = MinHasher(indir, minhashdir)
-	m.process()
+        m.process()
 
     lsh_params = {...}
     index = LSHBloom(minhashdir, lsh_params)
     index.deduplicate_corpus() # creates index and stores based on lsh_params
     ```
     """
+
     def __init__(self, minhash_dir: str, lsh_params: Dict):
         """
         minhash_dir: path to directory of pickled minhash signatures
@@ -97,4 +111,3 @@ class LSHBloom:
                     pbar.update()
 
         return duplicate_list
-
