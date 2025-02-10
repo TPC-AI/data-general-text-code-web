@@ -97,5 +97,10 @@ def parse_args():
 		help="If set, will skip the minhashing step of each workflow (useful if minhashes have been precomputed at minhash_dir)",
 		action="store_true"
 	)
+	parser.add_argument(
+		"--skip-insertion",
+		help="If set, will skip inserting entries to index. THis is a MOCK ARG",
+		action="store_true"
+	)
 
 	return parser.parse_args()

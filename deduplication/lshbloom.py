@@ -67,7 +67,8 @@ class LSHBloom:
 
         # insert if not duplicated in index
         if not result:
-            self.lsh.insert(m_query)
+            # WARNING YADU: Hack! We are skipping insertion
+            # self.lsh.insert(m_query)
             return None
 
         return [(key,)]
