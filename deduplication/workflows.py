@@ -103,7 +103,7 @@ def dedup_single_file_lsh(
 
 def clear_dir(save_dir):
     if os.path.exists(save_dir):
-        rm_files = [os.path.join(save_dir, f) for f in save_dir if ".bf" in f or '.csv' in f]
+        rm_files = [os.path.join(save_dir, f) for f in os.listdir(save_dir) if ".bf" in f or '.csv' in f]
         for f in rm_files:
             os.remove(f)
 
