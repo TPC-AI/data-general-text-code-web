@@ -50,11 +50,13 @@ def parse_args():
 	parser.add_argument(
 		"--sim-threshold",
 		help="Jaccard Similarity threshold for deduplication, should be in [0, 1]. Default is 0.8",
+                type=float,
 		default=0.8,
 	)
 	parser.add_argument(
 		"--num-perm",
 		help="Number of hash functions for MinHashing. Default is 128",
+                type=int,
 		default=128,
 	)
 	parser.add_argument(
