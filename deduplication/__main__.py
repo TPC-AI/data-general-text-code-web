@@ -1,7 +1,10 @@
 from deduplication.workflows import *
 from deduplication.args import parse_args
 
+
 args = parse_args()
+
+args.sim_threshold = float(args.sim_threshold)
 
 if args.mode == "bloom":
 	if args.single:
