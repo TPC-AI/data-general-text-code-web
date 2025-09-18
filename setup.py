@@ -31,8 +31,7 @@ setup(
         'numpy>=1.11',
         'scipy>=1.0.0',
         'redis>=2.10.0',
-        'datasketch @ git+https://github.com/123epsilon/datasketch.git@060a32b4b4a2272d77480dd633a1bf770678ba49',
-        'pybloomfiltermmap3==0.5.7',
+        'datasketch @ git+https://github.com/123epsilon/datasketch.git@8f4b34f604e3d26369a50ab731b4948c0e04eb5a',
         'tqdm>=4.60.0',
     ]
 )
