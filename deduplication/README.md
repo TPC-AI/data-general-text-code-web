@@ -1,4 +1,13 @@
 # Install
+
+This package requires `rust` and `cargo`. The recommended way to install these dependencies is using [`rustup`](https://rustup.rs/):
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+Then, to install the python package you can use pip:
+
 ```bash
 git clone https://github.com/TPC-AI/data-general-text-code-web.git
 cd data-general-text-code-web/
