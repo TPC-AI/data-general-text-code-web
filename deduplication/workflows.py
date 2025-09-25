@@ -17,7 +17,7 @@ def dedup_single_lsh(
     n_hash_funcs: int = 128,
     redis_name: str = b"tpc",
     redis_port: int = 6379,
-    compute_minhashes: bool = True,
+    skip_minhashing: bool = False,
 ):
     lsh_params = {
         "threshold": sim_threshold,
@@ -29,7 +29,7 @@ def dedup_single_lsh(
         },
     }
 
-    if compute_minhashes:
+    if not skip_minhashing:
         m = MinHasher(input_dir, minhash_dir, n_hash_funcs)
         m.process()
 
@@ -48,7 +48,7 @@ def dedup_multi_lsh(
     n_hash_funcs: int = 128,
     redis_name: str = b"tpc",
     redis_port: int = 6379,
-    compute_minhashes: bool = True,
+    skip_minhashing: bool = False,
 ):
     assert len(input_dirs) == len(minhash_dirs) == len(corpus_names), \
         f"Expected len(input_dirs) == len(minhash_dirs) == len(corpus_names), got {len(input_dirs)}, {len(minhash_dirs)}, {len(corpus_names)}"
@@ -63,7 +63,7 @@ def dedup_multi_lsh(
             n_hash_funcs,
             redis_name,
             redis_port,
-            compute_minhashes,
+            skip_minhashing,
         )
 
 
@@ -76,7 +76,7 @@ def dedup_single_file_lsh(
     n_hash_funcs: int = 128,
     redis_name: str = b"tpc",
     redis_port: int = 6379,
-    compute_minhashes: bool = True,
+    skip_minhashing: bool = False,
 ):
     lsh_params = {
         "threshold": sim_threshold,
@@ -88,7 +88,7 @@ def dedup_single_file_lsh(
         },
     }
 
-    if compute_minhashes:
+    if not skip_minhashing:
         m = MinHasher(None, minhash_dir, n_hash_funcs)
         m.compute_minhash_for_file(input_file)
 
@@ -105,6 +105,7 @@ def clear_dir(save_dir):
     if os.path.exists(save_dir):
         rm_files = [os.path.join(save_dir, f) for f in os.listdir(save_dir) if ".bf" in f or '.csv' in f]
         for f in rm_files:
+            print(f"Clearing {f}...")
             os.remove(f)
 
 
@@ -119,7 +120,7 @@ def dedup_single_bloom(
     sim_threshold: float = 0.8,
     n_hash_funcs: int = 128,
     save_dir: str = "./",
-    compute_minhashes: bool = True,
+    skip_minhashing: bool = False,
     clear: bool = False,
 ):
     if clear:
@@ -133,7 +134,7 @@ def dedup_single_bloom(
         "save_dir": save_dir
     }
 
-    if compute_minhashes:
+    if not skip_minhashing:
         m = MinHasher(input_dir, minhash_dir, n_hash_funcs)
         m.process()
 
@@ -153,7 +154,7 @@ def dedup_multi_bloom(
     sim_threshold: float = 0.8,
     n_hash_funcs: int = 128,
     save_dir: str = "./",
-    compute_minhashes: bool = True,
+    skip_minhashing: bool = False,
     clear: bool = False,
 ):
     assert len(input_dirs) == len(minhash_dirs) == len(corpus_names), \
@@ -173,7 +174,7 @@ def dedup_multi_bloom(
             sim_threshold,
             n_hash_funcs,
             save_dir,
-            compute_minhashes,
+            skip_minhashing,
             clear=False
         )
 
@@ -187,7 +188,7 @@ def dedup_single_file_bloom(
     sim_threshold: float = 0.8,
     n_hash_funcs: int = 128,
     save_dir: str = "./",
-    compute_minhashes: bool = True,
+    skip_minhashing: bool = False,
     clear: bool = False,
 ):
     if clear:
@@ -201,7 +202,7 @@ def dedup_single_file_bloom(
         "save_dir": save_dir
     }
 
-    if compute_minhashes:
+    if not skip_minhashing:
         m = MinHasher(None, minhash_dir, n_hash_funcs)
         m.compute_minhash_for_file(input_file)
 
