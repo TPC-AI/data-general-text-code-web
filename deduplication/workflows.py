@@ -121,6 +121,7 @@ def dedup_single_bloom(
     save_dir: str = "./",
     compute_minhashes: bool = True,
     clear: bool = False,
+    skip_insertion: bool = False,
 ):
     if clear:
         clear_dir(save_dir)
@@ -138,7 +139,7 @@ def dedup_single_bloom(
         m.process()
 
     index = LSHBloom(minhash_dir, lsh_params)
-    duplicates = index.deduplicate_corpus()
+    duplicates = index.deduplicate_corpus(skip_insertion=skip_insertion)
     write_duplicates_to_csv(duplicates, csvfile, corpus_name, header=["dup_key"])
 
 
@@ -155,6 +156,7 @@ def dedup_multi_bloom(
     save_dir: str = "./",
     compute_minhashes: bool = True,
     clear: bool = False,
+    skip_insertion: bool = False,
 ):
     assert len(input_dirs) == len(minhash_dirs) == len(corpus_names), \
         f"Expected len(input_dirs) == len(minhash_dirs) == len(corpus_names), got {len(input_dirs)}, {len(minhash_dirs)}, {len(corpus_names)}"
@@ -174,7 +176,8 @@ def dedup_multi_bloom(
             n_hash_funcs,
             save_dir,
             compute_minhashes,
-            clear=False
+            clear=False,
+            skip_insertion=skip_insertion
         )
 
 def dedup_single_file_bloom(
@@ -189,6 +192,7 @@ def dedup_single_file_bloom(
     save_dir: str = "./",
     compute_minhashes: bool = True,
     clear: bool = False,
+    skip_insertion: bool = False,
 ):
     if clear:
         clear_dir(save_dir)
@@ -208,5 +212,5 @@ def dedup_single_file_bloom(
     fname = input_file.split("/")[-1]
     minhash_file = f"{minhash_dir}/{fname[:-6]}.pkl"
     index = LSHBloom(minhash_dir, lsh_params)
-    duplicates = index.deduplicate_minhash_file(minhash_file)
+    duplicates = index.deduplicate_minhash_file(minhash_file, skip_insertion=skip_insertion)
     write_duplicates_to_csv(duplicates, csvfile, corpus_name, header=["dup_key"])
