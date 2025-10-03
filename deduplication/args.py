@@ -101,7 +101,7 @@ def parse_args():
 	)
 	parser.add_argument(
 		"--skip-insertion",
-		help="If set, will skip inserting entries to index. THis is a MOCK ARG",
+		help="If set, will skip inserting unique documents into the index (works only with LSHBloom)",
 		action="store_true"
 	)
 

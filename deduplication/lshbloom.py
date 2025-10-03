@@ -31,7 +31,7 @@ class LSHBloom:
         self.minhash_dir = minhash_dir
         self.lsh = MinHashLSHBloom(**lsh_params)
 
-    def deduplicate_corpus(self) -> List[Tuple[str]]:
+    def deduplicate_corpus(self, skip_insertion: bool = False) -> List[Tuple[str]]:
         """
         Deduplicates documents in the given corpus and adds them to the LSH index if appropriate.
         Documents without existing duplicates will be stored in the LSH index for future deduplication.
@@ -45,12 +45,12 @@ class LSHBloom:
             if f.endswith(".pkl")
         ]
         for minhashfile in minhash_files:
-            dups = self.deduplicate_minhash_file(minhashfile)
+            dups = self.deduplicate_minhash_file(minhashfile, skip_insertion=skip_insertion)
             duplicate_list.extend(dups)
 
         return duplicate_list
 
-    def deduplicate_and_insert(self, params: Tuple) -> List[Tuple[str]]:
+    def deduplicate_and_insert(self, params: Tuple, skip_insertion: bool = False) -> List[Tuple[str]]:
         """
         Deduplicates a MinHash signature corresponding to a document using the provided LSH index.
         If the document is not duplicated in the LSH index, it is added to the index.
@@ -67,13 +67,13 @@ class LSHBloom:
 
         # insert if not duplicated in index
         if not result:
-            # WARNING YADU: Hack! We are skipping insertion
-            # self.lsh.insert(m_query)
+            if not skip_insertion:
+                self.lsh.insert(m_query)
             return None
 
         return [(key,)]
 
-    def deduplicate_minhash_file(self, minhashfile: str) -> List[Tuple[str]]:
+    def deduplicate_minhash_file(self, minhashfile: str, skip_insertion: bool = False) -> List[Tuple[str]]:
         """
         Deduplicate documents in the given minhash file and adds them to the LSH index if appropriate.
         Documents without existing duplicates will be stored in the LSH index for future deduplication.
@@ -92,7 +92,7 @@ class LSHBloom:
             # can't multiprocess here as insertion requires C++ dependencies that are not compatible with pickle
             with tqdm(total=len(minhash_list), desc=fname) as pbar:
                 for i in range(len(minhash_list)):
-                    result = self.deduplicate_and_insert(minhash_list[i])
+                    result = self.deduplicate_and_insert(minhash_list[i], skip_insertion=skip_insertion)
                     if result:
                         duplicate_list.extend(result)
                     pbar.update()
