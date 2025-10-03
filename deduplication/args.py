@@ -50,11 +50,13 @@ def parse_args():
 	parser.add_argument(
 		"--sim-threshold",
 		help="Jaccard Similarity threshold for deduplication, should be in [0, 1]. Default is 0.8",
+                type=float,
 		default=0.8,
 	)
 	parser.add_argument(
 		"--num-perm",
 		help="Number of hash functions for MinHashing. Default is 128",
+                type=int,
 		default=128,
 	)
 	parser.add_argument(
@@ -95,6 +97,11 @@ def parse_args():
 	parser.add_argument(
 		"--skip-minhashing",
 		help="If set, will skip the minhashing step of each workflow (useful if minhashes have been precomputed at minhash_dir)",
+		action="store_true"
+	)
+	parser.add_argument(
+		"--skip-insertion",
+		help="If set, will skip inserting unique documents into the index (works only with LSHBloom)",
 		action="store_true"
 	)
 

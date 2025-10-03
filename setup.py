@@ -34,5 +34,7 @@ setup(
         'datasketch @ git+https://github.com/123epsilon/datasketch.git@060a32b4b4a2272d77480dd633a1bf770678ba49',
         'pybloomfiltermmap3==0.5.7',
         'tqdm>=4.60.0',
+        'zstandard>=0.23.0',
+        'pyarrow>=18.0.0',
     ]
 )
